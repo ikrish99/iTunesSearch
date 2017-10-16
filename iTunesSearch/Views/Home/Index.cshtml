@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Lighting Fast iTunes Search";
+}
+
+<head>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="~/Content/iTunesStyles.css" />
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/angular.chartjs/latest/angular-chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    <script src="~/Scripts/app.js"></script>
+</head>
+
+<body ng-app="itunesSearch">
+    <div ng-controller="mainController">
+        <div>
+            <h3 class="header">iTunes Search</h3>
+        </div>
+        <div ng-cloak>
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom>
+                    <md-tab label="Search">
+                        <md-content class="md-padding">
+                            <div flex>
+                                <div layout="row" class="searchLayout">
+                                    <div layout="column">
+                                        <md-input-container class="md-block searchBoarder" flex-gt-sm>
+                                            <label>Search Apple iTunes</label>
+                                            <input class="searchinput" required ng-model="searchName" ng-keypress="checkForEnter($event)">
+                                            <div ng-messages="searchName.$error">
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <div layout="column">
+                                        <md-button md-no-ink class="md-primary" ng-click="showFilter()">Add Filters</md-button>
+                                    </div>
+                                    <div layout="column">
+                                        <md-button class="md-raised md-primary" ng-click="submitForSearch()">Serach</md-button>
+                                    </div>
+                                </div>
+
+                                <div class="divFilter" layout="column" ng-show="showFilterUI">
+                                    <div layout="row">
+                                        <label>Type of Search</label>
+                                        <md-radio-group ng-model="selectedType" ng-click="selectedFilters('type')">
+                                            <div layout="column">
+                                                <md-radio-button ng-repeat="type in typeOptions"
+                                                                 ng-value="type.value" class="md-primary">
+                                                    {{type.name}}
+                                                </md-radio-button>
+                                            </div>
+                                        </md-radio-group>
+
+                                        <label>Country</label>
+                                        <md-radio-group ng-model="selectedCountry" ng-click="selectedFilters('country')">
+                                            <div layout="column">
+                                                <md-radio-button ng-repeat="country in countryOptions"
+                                                                 ng-value="country.value" class="md-primary">
+                                                    {{country.name}}
+                                                </md-radio-button>
+                                            </div>
+                                        </md-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div ng-show="display">
+                                    <md-content>
+                                        <md-list>
+                                            <md-list-item class="md-3-line" ng-repeat="item in itunesData">
+                                                <div class="md-list-item-text">
+                                                    <h3>
+                                                        <a ng-show="{{item.artistViewUrl.length > 0}}" href="{{item.artistViewUrl}}" ng-click="postClick('artist')" target="_blank">{{item.artistName}}</a>
+                                                        <span ng-hide="{{item.artistViewUrl.length > 0}}">{{item.artistName}}</span>
+                                                    </h3>
+                                                    <h4>{{item.collectionName}}</h4>
+                                                    <p>Amount - ${{item.collectionPrice}}</p>
+                                                </div>
+                                                <md-button aria-label="musicButton" class="md-secondary imgButtonSize" ng-show="{{item.collectionViewUrl.length > 0}}">
+                                                    <a href="{{item.collectionViewUrl}}" ng-click="postClick('collection')" target="_blank"><img class="musicSize" src="~/179979.svg" title="List" /></a>
+                                                </md-button>
+                                                <md-button aria-label="headphonesButton" class="md-secondary imgButtonSize" ng-show="{{item.previewUrl.length > 0}}">
+                                                    <a href="{{item.previewUrl}}" ng-click="postClick('preview')" target="_blank"><img class="headphonesSize" src="~/351638.png" title="Preview" /></a>
+                                                </md-button>
+                                                <md-divider ng-if="!$last"></md-divider>
+                                            </md-list-item>
+                                        </md-list>
+                                    </md-content>
+                                </div>
+                                <div>
+                                    <span class="errorMessage" ng-show="displayError">Nothing Found. Please Try Again with Correct Name and Filters</span>
+                                    <span class="errorMessage" ng-show="apiError">Can't Talk to Server. Please Try again after some time and Cross check your internet Connection</span>
+                                </div>
+                            </div>
+
+                            <div ng-show="nextButton" class="nextButtonPosition">
+                                <md-button md-no-ink class="md-primary imgButtonSize" title="Prev" ng-click="sortRecord('prev')"><<<</md-button>
+                                <md-button md-no-ink class="md-primary imgButtonSize" title="Next" ng-click="sortRecord('next')">>>></md-button>
+                            </div>
+
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Tool Analytics" ng-click="getAnalytics()">
+                        <md-content class="md-padding">
+                            <div ng-show="graphShow">
+                                <div>
+                                    Below graph displays, Number clicks made my user.
+                                </div>
+                                <div class="graphLayout">
+                                    <canvas id="doughnut" class="chart chart-doughnut"
+                                            chart-data="graphData" chart-labels="graphLabel" chart-colors="graphColor"></canvas>
+                                </div>
+                                <div>
+                                    <img class="imgForGraph" src="~/graph.png" />
+                                </div>
+                            </div>
+                            <div ng-hide="graphShow">
+                                <h3>No clicks made by User. Play around to get the graph</h3>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </div>
+        
+        <div>
+            <h4 class="footer">Developed by Gopi Krishna Kurrella</h4>
+        </div>
+    </div>
+</body>

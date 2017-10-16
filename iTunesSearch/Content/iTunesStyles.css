@@ -1,0 +1,47 @@
+﻿.errorMessage{
+    color: red;
+    padding-left: 20%;
+}
+
+.header {
+    padding-top: 2%;
+    border-radius: 15%;
+    background-color: rgb(63,81,181);
+    color: ghostwhite;
+    height: 50px;
+    text-align: center;
+}
+
+.headphonesSize{
+    width: 31px;
+}
+
+.musicSize {
+    width: 31px;
+}
+
+.imgButtonSize{
+    min-width: 40px !important;
+}
+
+.footer {
+    padding-top: 1.5%;
+    background-color: rgb(63,81,181);
+    color: ghostwhite;
+    height: 30px;
+    text-align: center;
+    font-size: x-small;
+}
+
+.nextButtonPosition{
+    float: right;
+}
+
+.graphLayout{
+    width: 250px;
+    height: 250px;
+}
+
+.imgForGraph{
+    width: 254px;
+}

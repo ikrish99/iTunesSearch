@@ -53,5 +53,3 @@
 		search value - jack johnson
 		filter - none
 	- output - Can't Talk to Server. Please Try again after some time and Cross check your internet Connection (Error code 500)
-
-Thank you. Sorry, If I have missed anything in the requirements.

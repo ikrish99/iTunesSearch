@@ -26,7 +26,7 @@
 
 # Running the project:
 	- Open the app solution(.sln) in Visual Studio (Prefered vs pro 2017, because I have developed in 2017).
-	- Start the project in VS.
+	- Start the project in VS. (connect to internet because I have used cdn for angularjs)
 	- Open http://localhost:63978/, if the VS not opens the app automatically.
 	- Enjoy searching Itunes and track your analytics.
 

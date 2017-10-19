@@ -5,11 +5,12 @@ var itunesApi = "https://itunes.apple.com/search?";
 var mainController = function ($scope, $http) {
 
     $scope.showFilterUI = false;
+    $scope.favoriteData = [];
 
     //JSON object to store filter selected options (Default to country-us and type -'')
     $scope.filters = [
         {
-            country: 'us',
+            country: '',
             type: ''
         }
     ];
@@ -98,6 +99,17 @@ var mainController = function ($scope, $http) {
         }
     }
 
+    //Function to re remove the filters, which is selected
+    $scope.removeFilter = function (tag) {
+        if (tag == 'country') {
+            $scope.filters[0].country = '';
+            $scope.selectedCountry = '';
+        } else if (tag == 'type') {
+            $scope.filters[0].type = '';
+            $scope.selectedType = '';
+        }
+    }
+
     //Function to get Analytics data from local host api.
     $scope.getAnalytics = function () {
 
@@ -161,7 +173,16 @@ var mainController = function ($scope, $http) {
     //Function to call the iTunes public api based on the search value
     $scope.submitForSearch = function () {
         if ($scope.searchName != null && $scope.searchName != undefined && $scope.searchName != '' && $scope.searchName.length != 0) {
-            var url = itunesApi + "term=" + $scope.searchName + "&country=" + $scope.filters[0].country + "&entity=" + $scope.filters[0].type;
+
+            var url = itunesApi + "term=" + $scope.searchName;
+
+            if ($scope.filters[0].country != '') {
+                url = url + "&country=" + $scope.filters[0].country;
+            }
+
+            if ($scope.filters[0].type != '') {
+                url = url + "&entity=" + $scope.filters[0].type;
+            }
 
             $scope.showFilterUI = false;
             $scope.nextButton = false;
@@ -194,7 +215,6 @@ var mainController = function ($scope, $http) {
                     $scope.displayError = false;
                     $scope.apiError = false;
                     $scope.display = true;
-                    $scope.nextButton = false;
                 }
             }).catch(function (error) {
                 if (error.status >= 400 && error.status < 500) {
@@ -212,6 +232,56 @@ var mainController = function ($scope, $http) {
             console.log("Nothing Entered")
         }
     };
+
+    //Function to add the favorite in my profile
+    $scope.favoriteSelected = function (item, index) {
+        if ($scope.itunesData[index].favoriteColor == undefined) {
+            $scope.itunesData[index].favoriteColor = '';
+            $scope.itunesData[index].favoriteColor = "selected";
+            $scope.favoriteData.push(item);
+        } else if ($scope.itunesData[index].favoriteColor == '') {
+            $scope.itunesData[index].favoriteColor = "selected";
+            $scope.favoriteData.push(item);
+        } else {
+            $scope.itunesData[index].favoriteColor = '';
+            $scope.removeFavorite('', item.collectionId);
+        }
+        
+    }
+
+    //Function to remove favorite from my profile
+    $scope.removeFavorite = function (index, collectionId) {
+        if (index == '') {
+            var i = 0;
+            angular.forEach($scope.favoriteData, function (item) {
+                if (item.collectionId == collectionId) {
+                    index = i
+                    return;
+                }
+                i++;
+            });
+        }
+        $scope.favoriteData.splice(index, 1);
+    }
+
+    //Function to clear the whole page
+    $scope.clearAllData = function () {
+        $scope.itunesData = [];
+        $scope.searchName = '';
+        $scope.dataBackup = [];
+        $scope.resultCount = '';
+        $scope.nextButton = false;
+        $scope.selectedType = '';
+        $scope.selectedCountry = '';
+        $scope.showFilterUI = false;
+        $scope.filters = [
+            {
+                country: '',
+                type: ''
+            }
+        ];
+    }
+
 }
 
 app.controller('mainController', mainController);

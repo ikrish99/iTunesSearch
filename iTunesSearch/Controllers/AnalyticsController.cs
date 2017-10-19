@@ -10,16 +10,16 @@ namespace iTunesSearch.Controllers
     public class AnalyticsController : ApiController
     {
         //Static object to store my button click values. Used as DB
-        private static Dictionary<string, int> data = new Dictionary<string, int>();
+        private static Dictionary<string, int> _data = new Dictionary<string, int>();
 
         public AnalyticsController()
         {
-            if(data.Count == 0)
+            if(_data.Count == 0)
             {
-                data.Add("search", 0);
-                data.Add("preview", 0);
-                data.Add("collection", 0);
-                data.Add("artist", 0);
+                _data.Add("search", 0);
+                _data.Add("preview", 0);
+                _data.Add("collection", 0);
+                _data.Add("artist", 0);
             }
         }
 
@@ -28,19 +28,19 @@ namespace iTunesSearch.Controllers
         {
             if (buttonName == "search")
             {
-                data["search"] = data["search"] + 1;
+                _data["search"] = _data["search"] + 1;
             }
             else if (buttonName == "preview")
             {
-                data["preview"] = data["preview"] + 1;
+                _data["preview"] = _data["preview"] + 1;
             }
             else if(buttonName == "collection")
             {
-                data["collection"] = data["collection"] + 1;
+                _data["collection"] = _data["collection"] + 1;
             }
             else if(buttonName == "artist")
             {
-                data["artist"] = data["artist"] + 1;
+                _data["artist"] = _data["artist"] + 1;
             }
             else
             {
@@ -53,7 +53,7 @@ namespace iTunesSearch.Controllers
         [HttpGet]
         public IHttpActionResult GetCount()
         {
-            return Ok(data);
+            return Ok(_data);
         }
 
     }
